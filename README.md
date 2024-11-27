@@ -24,16 +24,17 @@ Membros do Projeto:
 * **Cadastro e Gerenciamento de Pacientes**
 * **Agendamento de Consultas Médicas**
 * **Visualização de Disponibilidade de Médicos**
-* **Cadastro de Serviço, Exames e Procedimentos Médicos**
+* **Cadastro de Exames e Procedimentos Médicos**
+* **Criação de Receitas**
 * **Registro de Fichas Médicas**
 
 
 ## Estrutura dos Arquivos
 
-- **Controllers**: Responsáveis por definir os endpoints da API.
+- **Controller**: Responsáveis por definir os endpoints da API.
 - **Model**: Representa as entidades do banco de dados e seus atributos.
-- **Repositories**: Arquivos que fazem a conexão com o banco de dados.
-- **Services**: Contêm a lógica de negócio para manipular e consultar os dados.
+- **Repository**: Arquivos que fazem a conexão com o banco de dados.
+- **Service**: Contêm a lógica de negócio para manipular e consultar os dados.
 
 ## Como Executar
 ### Pré-requisitos
@@ -65,42 +66,42 @@ Membros do Projeto:
 
 ## Endpoints
 
-A API fornece os seguintes endpoints para a manipulação de dados relacionados a médicos, consultas, pacientes, serviços e fichas médicas. Cada endpoint permite as operações básicas CRUD.
+A API fornece os seguintes endpoints para a manipulação de dados relacionados a pacientes, médicos, consultas, receitas e fichas médicas. Cada endpoint permite as operações básicas CRUD.
 
 ### Paciente
-- **GET** `/api/patient/{id}`: Recupera um paciente pelo ID.
-- **POST** `/api/patient`: Cria um novo paciente.
-- **PUT** `/api/patient/{id}`: Atualiza um paciente existente.
-- **DELETE** `/api/patient/{id}`: Remove um paciente pelo ID.
-- **GET** `/api/patient`: Recupera todos os pacientes.
+- **GET** `/api/patients/{id}`: Recupera um paciente pelo ID.
+- **POST** `/api/patients`: Cria um novo paciente.
+- **PUT** `/api/patients/{id}`: Atualiza um paciente existente.
+- **DELETE** `/api/patients/{id}`: Remove um paciente pelo ID.
+- **GET** `/api/patients`: Recupera todos os pacientes.
 
 ### Consulta
-- **GET** `/api/consultation/{id}`: Recupera uma consulta pelo ID.
-- **POST** `/api/consultation`: Cria uma nova consulta.
-- **PUT** `/api/consultation/{id}`: Atualiza uma consulta existente.
-- **DELETE** `/api/consultation/{id}`: Remove uma consulta pelo ID.
-- **GET** `/api/consultation`: Recupera todas as consultas.
+- **GET** `/api/consultations/{id}`: Recupera uma consulta pelo ID.
+- **POST** `/api/consultations`: Cria uma nova consulta.
+- **PUT** `/api/consultations/{id}`: Atualiza uma consulta existente.
+- **DELETE** `/api/consultations/{id}`: Remove uma consulta pelo ID.
+- **GET** `/api/consultations`: Recupera todas as consultas.
 
 ### Médico
-- **GET** `/api/medic/{id}`: Recupera um médico pelo ID.
-- **POST** `/api/medic`: Cria um novo médico.
-- **PUT** `/api/medic/{id}`: Atualiza um médico existente.
-- **DELETE** `/api/medic/{id}`: Remove um médico pelo ID.
-- **GET** `/api/medic`: Recupera todos os médicos.
+- **GET** `/api/medics/{id}`: Recupera um médico pelo ID.
+- **POST** `/api/medics`: Cria um novo médico.
+- **PUT** `/api/medics/{id}`: Atualiza um médico existente.
+- **DELETE** `/api/medics/{id}`: Remove um médico pelo ID.
+- **GET** `/api/medics`: Recupera todos os médicos.
 
 ### Ficha
-- **GET** `/api/record/{id}`: Recupera um registro pelo ID.
-- **POST** `/api/record`: Cria um novo registro.
-- **PUT** `/api/record/{id}`: Atualiza um registro existente.
-- **DELETE** `/api/record/{id}`: Remove um registro pelo ID.
-- **GET** `/api/record`: Recupera todos os registros.
+- **GET** `/api/records/{id}`: Recupera um registro pelo ID.
+- **POST** `/api/records`: Cria um novo registro.
+- **PUT** `/api/records/{id}`: Atualiza um registro existente.
+- **DELETE** `/api/records/{id}`: Remove um registro pelo ID.
+- **GET** `/api/records`: Recupera todos os registros.
 
-### Serviço
-- **GET** `/api/service/{id}`: Recupera um serviço pelo ID.
-- **POST** `/api/service`: Cria um novo serviço.
-- **PUT** `/api/service/{id}`: Atualiza um serviço existente.
-- **DELETE** `/api/service/{id}`: Remove um serviço pelo ID.
-- **GET** `/api/service`: Recupera todos os serviços.
+### Receita
+- **GET** `/api/recipes/{id}`: Recupera uma receita pelo ID.
+- **POST** `/api/recipes`: Cria uma nova receita.
+- **PUT** `/api/recipes/{id}`: Atualiza uma receita existente.
+- **DELETE** `/api/recipes/{id}`: Remove uma receita pelo ID.
+- **GET** `/api/recipes`: Recupera todas as receitas.
 
 ## Estrutura dos Dados
 ### Paciente
@@ -111,13 +112,15 @@ Representa um paciente e suas informações básicas.
     "id": 1,
     "nome": "Hugo",
     "sexo": "Masculino",
-    "telefone": "9876543216",
+    "cpf": "230.333.666-98",
     "email": "hugo.pa@gmail.com",
-    "endereco": "Centro",
+    "telefone": "9876543216",
+    "endereco": "Rua Exemplo, 123, Centro",
     "data_nascimento": "1996-01-01T00:00:00-02:00",
-    "cpf": "230.333.666-98"
+    "tipo_sanguineo": "B+",
+    "identificador_tarefa": 1
 }
-``` 
+```
 
 ### Consulta
 
@@ -127,7 +130,11 @@ Contém a data e horário do agendamento de uma consulta.
 {
     "id": 1,
     "data": "2024-05-21",
-    "horario": "11:30:00"
+    "horario": "11:30:00",
+    "status": "Agendada",
+    "tipo": "Exame Sanguíneo",
+    "id_paciente": 1,
+    "id_medico": 1
 }
 ```
 
@@ -139,10 +146,11 @@ Contém os dados de contato e disponibilidade de um médico.
 {
     "id": 1,
     "nome": "Francisco",
-    "sexo": "Masculino",
-    "contato": "9876543210",
+    "email": "franciscoexemplo@gmai.com",
+    "telefone": "9876543210",
     "especialidade": "Cardiologista",
-    "disponibilidade": true
+    "status_disponibilidade": "Indísponível",
+    "crm": "00000000-0/BR"
 }
 ```
 
@@ -152,25 +160,27 @@ Representa as informações da ficha médica de um paciente.
 ```json
 {
     "id": 1,
-    "diagnostico": "doença cardiaca",
-    "historico_medico": "pai com historico de doença cardiaca",
-    "status": "em andamento",
-    "id_paciente": 1,
-    "id_medico": 1
+    "status_paciente": "Estável.",
+    "historico_medico": "Pai com historico de doença cardiaca.",
+    "diagnostico": "Doença cardiaca.",
+    "tratamento": "Cirurgia cardiovascular.",
+    "observacoes": "",
+    "id_paciente": 1
 }
 
 ```
 
-### Serviço
-Contém as informações dos serviços médicos do hospital.
+### Receita
+Representa as informações referentes a receita de uma consulta.
 
 ```json
 {
     "id": 1,
-    "tipo": "Cardiaco",
-    "requisito": "exames cardiacos",
-    "equipamento": "equipamentos cardiacos",
-    "descricao": "consulta cardiaca",
+    "medicamentos_prescritos": "Xarópe.",
+    "validade": "01/12/2025",
+    "observacoes": "",
+    "id_consulta": 1,
     "id_medico": 1
 }
+
 ```
