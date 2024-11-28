@@ -30,7 +30,7 @@ public class RecordService {
         recordRepository.deleteById(id);
     }
 
-    public List<Record> findRecordByPatientId(Long patientId) {
+    public Optional<Record> findRecordByPatientId(Long patientId) {
         return recordRepository.findByPatientId(patientId);
     }
 }
