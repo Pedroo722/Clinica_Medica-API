@@ -30,23 +30,23 @@ public class Recipe {
 
     @ManyToOne
     @JoinColumn(name = "id_consulta", nullable = false)
-    private int consulta;
+    private Consultation consulta;
 
     @ManyToOne
     @JoinColumn(name = "id_medico", nullable = false)
-    private int medico;
+    private Medic medico;
 
     public Long getId() { return id; }
     public String getMedicamentosPrescritos() { return medicamentosPrescritos; }
     public LocalDate getValidade() { return validade; }
     public String getObservacoes() { return observacoes; }
-    public int getConsulta() { return consulta; }
-    public int getMedico() { return medico; }
+    public Consultation getConsulta() { return consulta; }
+    public Medic getMedico() { return medico; }
 
     public void setId(Long id) { this.id = id; }
     public void setMedicamentosPrescritos(String medicamentosPrescritos) { this.medicamentosPrescritos = medicamentosPrescritos; }
     public void setValidade(LocalDate validade) { this.validade = validade; }
     public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
-    public void setConsulta(int consulta) { this.consulta = consulta; }
-    public void setMedico(int medico) { this.medico = medico; }
+    public void setConsulta(Consultation consulta) { this.consulta = consulta; }
+    public void setMedico(Medic medico) { this.medico = medico; }
 }

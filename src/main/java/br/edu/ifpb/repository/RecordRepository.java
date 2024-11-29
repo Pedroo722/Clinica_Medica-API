@@ -9,5 +9,5 @@ import br.edu.ifpb.model.Record;
 
 @Repository
 public interface RecordRepository extends JpaRepository<Record, Long> {
-    Optional<Record> findByPatientId(Long pacienteId);
+    public Optional<Record> findByPacienteId(Long pacienteId);
 }

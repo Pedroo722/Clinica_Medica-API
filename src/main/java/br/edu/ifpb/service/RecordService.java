@@ -31,6 +31,6 @@ public class RecordService {
     }
 
     public Optional<Record> findRecordByPatientId(Long patientId) {
-        return recordRepository.findByPatientId(patientId);
+        return recordRepository.findByPacienteId(patientId);
     }
 }
