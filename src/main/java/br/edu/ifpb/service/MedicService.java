@@ -30,9 +30,11 @@ public class MedicService {
         medicRepository.deleteById(id);
     }
 
-    public Optional<Medic> findMedicByNome(String nome) {
-        return medicRepository.findAll().stream()
-                             .filter(medic -> medic.getNome().equals(nome))
-                             .findFirst();
+    public List<Medic> findMedicByName(String name) {
+        return medicRepository.findByName(name);
+    }
+
+    public List<Medic> findMedicByCRM(String crm) {
+        return medicRepository.findByCrm(crm);
     }
 }

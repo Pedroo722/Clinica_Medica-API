@@ -1,5 +1,6 @@
 package br.edu.ifpb.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,5 +29,13 @@ public class ConsultationService {
 
     public void deleteConsultation(Long id) {
         consultationRepository.deleteById(id);
+    }
+
+    public List<Consultation> findConsultationByData(LocalDate data) {
+        return consultationRepository.findByData(data);
+    }
+
+    public List<Consultation> findConsultationByStatus(String status) {
+        return consultationRepository.findByStatus(status);
     }
 }

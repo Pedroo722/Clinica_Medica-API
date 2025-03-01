@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifpb.repository.PatientRepository;
 import br.edu.ifpb.model.Patient;
+import br.edu.ifpb.repository.PatientRepository;
 
 @Service
 public class PatientService {
@@ -30,9 +30,11 @@ public class PatientService {
         patientRepository.deleteById(id);
     }
 
-    public Optional<Patient> findPatientByNome(String nome) {
-        return patientRepository.findAll().stream()
-                             .filter(patient -> patient.getNome().equals(nome))
-                             .findFirst();
+    public List<Patient> findPatientByName(String name) {
+        return patientRepository.findByNome(name);
+    }
+
+    public List<Patient> findPatientByCpf(String cpf) {
+        return patientRepository.findByCpf(cpf);
     }
 }
