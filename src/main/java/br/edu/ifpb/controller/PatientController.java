@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.edu.ifpb.service.PatientService;
 import br.edu.ifpb.model.Patient;
+import br.edu.ifpb.service.PatientService;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -26,25 +27,37 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
-    @GetMapping
-    public List<Patient> getAllPatients() {
-        return patientService.getAllPatients();
+    @GetMapping("/list")
+    public ResponseEntity<List<Patient>> getAllPatients(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "cpf", required = false) String cpf) {
+        List<Patient> patients;
+
+        if (name != null) {
+            patients = patientService.findPatientByName(name);
+        } else if (cpf != null) {
+            patients = patientService.findPatientByCpf(cpf);
+        } else {
+            patients = patientService.getAllPatients();
+        }
+
+        return ResponseEntity.ok(patients);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/list/{id}")
     public ResponseEntity<Patient> getPatientById(@PathVariable("id") Long id) {
         return patientService.getPatientById(id)
                           .map(ResponseEntity::ok)
                           .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createPatient(@RequestBody Patient patient) {
         Patient savedPatient = patientService.savePatient(patient);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPatient);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updatePatient(@PathVariable("id") Long id, @RequestBody Patient patient) {
         if (!patientService.getPatientById(id).isPresent()) {
             return ResponseEntity.notFound().build();
@@ -55,7 +68,7 @@ public class PatientController {
         return ResponseEntity.ok(updatedPatient);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePatient(@PathVariable("id") Long id) {
         if (patientService.getPatientById(id).isPresent()) {
             patientService.deletePatient(id);

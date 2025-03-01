@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifpb.model.Medic;
@@ -26,25 +27,37 @@ public class MedicController {
     @Autowired
     private MedicService medicService;
 
-    @GetMapping
-    public List<Medic> getAllMedics() {
-        return medicService.getAllMedics();
+    @GetMapping("/list")
+    public ResponseEntity<List<Medic>> getAllMedics(
+        @RequestParam(value = "name", required = false) String name,
+        @RequestParam(value = "crm", required = false) String crm) {
+        List<Medic> medics;
+
+        if (name != null) {
+            medics = medicService.findMedicByName(name);
+        } else if (crm != null) {
+            medics = medicService.findMedicByCRM(crm);
+        } else {
+            medics = medicService.getAllMedics();
+        }
+
+        return ResponseEntity.ok(medics);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/list/{id}")
     public ResponseEntity<Medic> getMedicById(@PathVariable("id") Long id) {
         return medicService.getMedicById(id)
                           .map(ResponseEntity::ok)
                           .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createMedic(@RequestBody Medic medic) {
         Medic savedMedic = medicService.saveMedic(medic);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedMedic);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateMedic(@PathVariable("id") Long id, @RequestBody Medic medic) {
         if (!medicService.getMedicById(id).isPresent()) {
             return ResponseEntity.notFound().build();
@@ -55,7 +68,7 @@ public class MedicController {
         return ResponseEntity.ok(updatedMedic);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteMedic(@PathVariable("id") Long id) {
         if (medicService.getMedicById(id).isPresent()) {
             medicService.deleteMedic(id);

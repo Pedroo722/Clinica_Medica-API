@@ -1,5 +1,6 @@
 package br.edu.ifpb.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifpb.model.Consultation;
@@ -26,25 +28,37 @@ public class ConsultationController {
     @Autowired
     private ConsultationService consultationService;
 
-    @GetMapping
-    public List<Consultation> getAllConsultations() {
-        return consultationService.getAllConsultations();
+    @GetMapping("/list")
+    public ResponseEntity<List<Consultation>> getAllConsultations(
+        @RequestParam(value = "data", required = false) LocalDate data,
+        @RequestParam(value = "status", required = false) String status) {
+        List<Consultation> consultations;
+
+        if (status != null) {
+            consultations = consultationService.findConsultationByStatus(status);
+        } else if (data != null) {
+            consultations = consultationService.findConsultationByData(data);
+        } else {
+            consultations = consultationService.getAllConsultations();
+        }
+
+        return ResponseEntity.ok(consultations);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/list/{id}")
     public ResponseEntity<Consultation> getConsultationById(@PathVariable("id") Long id) {
         return consultationService.getConsultationById(id)
                           .map(ResponseEntity::ok)
                           .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createConsultation(@RequestBody Consultation consultation) {
         Consultation savedConsultation = consultationService.saveConsultation(consultation);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedConsultation);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateConsultation(@PathVariable("id") Long id, @RequestBody Consultation consultation) {
         if (!consultationService.getConsultationById(id).isPresent()) {
             return ResponseEntity.notFound().build();
@@ -55,7 +69,7 @@ public class ConsultationController {
         return ResponseEntity.ok(updatedConsultation);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteConsultation(@PathVariable("id") Long id) {
         if (consultationService.getConsultationById(id).isPresent()) {
             consultationService.deleteConsultation(id);
