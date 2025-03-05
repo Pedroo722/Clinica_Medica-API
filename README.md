@@ -63,6 +63,9 @@ Membros do Projeto:
 4. Acesse a API em: `http://localhost:8080/api/{endpoint}`.
 
 
+5. Acesse a UI do Swagger em `http://localhost:8080/swagger-ui/index.html#/`.
+
+
 ## Endpoints
 
 A API fornece os seguintes endpoints para a manipulação de dados relacionados a pacientes, médicos, consultas, receitas e fichas médicas. Cada endpoint permite as operações básicas CRUD.
