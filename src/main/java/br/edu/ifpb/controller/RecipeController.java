@@ -1,6 +1,7 @@
 package br.edu.ifpb.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,44 +25,70 @@ import br.edu.ifpb.service.RecipeService;
 public class RecipeController {
 
     @Autowired
-    private RecipeService recipeController;
+    private RecipeService recipeService;
 
-    @GetMapping
-    public List<Recipe> getAllRecipes() {
-        return recipeController.getAllRecipess();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable("id") Long id) {
-        return recipeController.getRecipeById(id)
-                          .map(ResponseEntity::ok)
-                          .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<?> createRecipe(@RequestBody Recipe recipe) {
-        Recipe savedRecipe = recipeController.saveRecipe(recipe);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateRecipe(@PathVariable("id") Long id, @RequestBody Recipe recipe) {
-        if (!recipeController.getRecipeById(id).isPresent()) {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/list")
+    public ResponseEntity<?> getAllRecipes() {
+        try {
+            List<Recipe> recipes = recipeService.getAllRecipess();
+            return ResponseEntity.ok(recipes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao buscar receitas.");
         }
-
-        recipe.setId(id);
-        Recipe updatedRecipe = recipeController.saveRecipe(recipe);
-        return ResponseEntity.ok(updatedRecipe);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRecipe(@PathVariable("id") Long id) {
-        if (recipeController.getRecipeById(id).isPresent()) {
-            recipeController.deleteRecipe(id);
+    @GetMapping("/list/{id}")
+    public ResponseEntity<?> getRecipeById(@PathVariable("id") Long id) {
+        try {
+            return recipeService.getRecipeById(id)
+                    .map(ResponseEntity::ok)
+                    .orElseThrow(() -> new NoSuchElementException("Receita não encontrada"));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao buscar receita.");
+        }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createRecipe(@RequestBody Recipe recipe) {
+        try {
+            Recipe savedRecipe = recipeService.saveRecipe(recipe);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar receita.");
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateRecipe(@PathVariable("id") Long id, @RequestBody Recipe recipe) {
+        try {
+            if (!recipeService.getRecipeById(id).isPresent()) {
+                throw new NoSuchElementException("Receita não encontrada");
+            }
+
+            recipe.setId(id);
+            Recipe updatedRecipe = recipeService.saveRecipe(recipe);
+            return ResponseEntity.ok(updatedRecipe);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar receita.");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteRecipe(@PathVariable("id") Long id) {
+        try {
+            if (!recipeService.getRecipeById(id).isPresent()) {
+                throw new NoSuchElementException("Receita não encontrada");
+            }
+            recipeService.deleteRecipe(id);
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao excluir receita.");
         }
     }
 }

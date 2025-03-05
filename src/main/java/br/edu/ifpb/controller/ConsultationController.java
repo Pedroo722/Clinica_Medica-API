@@ -2,6 +2,7 @@ package br.edu.ifpb.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,53 +30,82 @@ public class ConsultationController {
     private ConsultationService consultationService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<Consultation>> getAllConsultations(
+    public ResponseEntity<?> getAllConsultations(
         @RequestParam(value = "data", required = false) LocalDate data,
         @RequestParam(value = "status", required = false) String status) {
-        List<Consultation> consultations;
+        try {
+            List<Consultation> consultations;
 
-        if (status != null) {
-            consultations = consultationService.findConsultationByStatus(status);
-        } else if (data != null) {
-            consultations = consultationService.findConsultationByData(data);
-        } else {
-            consultations = consultationService.getAllConsultations();
+            if (status != null) {
+                consultations = consultationService.findConsultationByStatus(status);
+            } else if (data != null) {
+                consultations = consultationService.findConsultationByData(data);
+            } else {
+                consultations = consultationService.getAllConsultations();
+            }
+
+            return ResponseEntity.ok(consultations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving consultations.");
         }
-
-        return ResponseEntity.ok(consultations);
     }
 
     @GetMapping("/list/{id}")
-    public ResponseEntity<Consultation> getConsultationById(@PathVariable("id") Long id) {
-        return consultationService.getConsultationById(id)
-                          .map(ResponseEntity::ok)
-                          .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getConsultationById(@PathVariable("id") Long id) {
+        try {
+            return consultationService.getConsultationById(id)
+                    .map(ResponseEntity::ok)
+                    .orElseThrow(() -> new NoSuchElementException("Consultation not found"));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving consultation.");
+        }
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createConsultation(@RequestBody Consultation consultation) {
-        Consultation savedConsultation = consultationService.saveConsultation(consultation);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedConsultation);
+        try {
+            Consultation savedConsultation = consultationService.saveConsultation(consultation);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedConsultation);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating consultation.");
+        }
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateConsultation(@PathVariable("id") Long id, @RequestBody Consultation consultation) {
-        if (!consultationService.getConsultationById(id).isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+        try {
+            if (!consultationService.getConsultationById(id).isPresent()) {
+                throw new NoSuchElementException("Consultation not found");
+            }
 
-        consultation.setId(id);
-        Consultation updatedConsultation = consultationService.saveConsultation(consultation);
-        return ResponseEntity.ok(updatedConsultation);
+            consultation.setId(id);
+            Consultation updatedConsultation = consultationService.saveConsultation(consultation);
+            return ResponseEntity.ok(updatedConsultation);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating consultation.");
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteConsultation(@PathVariable("id") Long id) {
-        if (consultationService.getConsultationById(id).isPresent()) {
+    public ResponseEntity<?> deleteConsultation(@PathVariable("id") Long id) {
+        try {
+            if (!consultationService.getConsultationById(id).isPresent()) {
+                throw new NoSuchElementException("Consultation not found");
+            }
             consultationService.deleteConsultation(id);
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting consultation.");
         }
     }
 }

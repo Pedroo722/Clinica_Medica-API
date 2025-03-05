@@ -1,6 +1,7 @@
 package br.edu.ifpb.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.edu.ifpb.exceptions.InvalidCRMException;
+import br.edu.ifpb.exceptions.InvalidEmailException;
 import br.edu.ifpb.model.Medic;
 import br.edu.ifpb.service.MedicService;
 
@@ -28,53 +31,82 @@ public class MedicController {
     private MedicService medicService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<Medic>> getAllMedics(
+    public ResponseEntity<?> getAllMedics(
         @RequestParam(value = "name", required = false) String name,
         @RequestParam(value = "crm", required = false) String crm) {
-        List<Medic> medics;
+        try {
+            List<Medic> medics;
 
-        if (name != null) {
-            medics = medicService.findMedicByName(name);
-        } else if (crm != null) {
-            medics = medicService.findMedicByCRM(crm);
-        } else {
-            medics = medicService.getAllMedics();
+            if (name != null) {
+                medics = medicService.findMedicByName(name);
+            } else if (crm != null) {
+                medics = medicService.findMedicByCRM(crm);
+            } else {
+                medics = medicService.getAllMedics();
+            }
+
+            return ResponseEntity.ok(medics);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving medics.");
         }
-
-        return ResponseEntity.ok(medics);
     }
 
     @GetMapping("/list/{id}")
-    public ResponseEntity<Medic> getMedicById(@PathVariable("id") Long id) {
-        return medicService.getMedicById(id)
-                          .map(ResponseEntity::ok)
-                          .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getMedicById(@PathVariable("id") Long id) {
+        try {
+            return medicService.getMedicById(id)
+                    .map(ResponseEntity::ok)
+                    .orElseThrow(() -> new NoSuchElementException("Medic not found"));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving medic.");
+        }
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createMedic(@RequestBody Medic medic) {
-        Medic savedMedic = medicService.saveMedic(medic);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedMedic);
+        try {
+            Medic savedMedic = medicService.saveMedic(medic);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedMedic);
+        } catch (InvalidEmailException | InvalidCRMException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating medic.");
+        }
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateMedic(@PathVariable("id") Long id, @RequestBody Medic medic) {
-        if (!medicService.getMedicById(id).isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+        try {
+            if (!medicService.getMedicById(id).isPresent()) {
+                throw new NoSuchElementException("Medic not found");
+            }
 
-        medic.setId(id);
-        Medic updatedMedic = medicService.saveMedic(medic);
-        return ResponseEntity.ok(updatedMedic);
+            medic.setId(id);
+            Medic updatedMedic = medicService.saveMedic(medic);
+            return ResponseEntity.ok(updatedMedic);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InvalidEmailException | InvalidCRMException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating medic.");
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteMedic(@PathVariable("id") Long id) {
-        if (medicService.getMedicById(id).isPresent()) {
+    public ResponseEntity<?> deleteMedic(@PathVariable("id") Long id) {
+        try {
+            if (!medicService.getMedicById(id).isPresent()) {
+                throw new NoSuchElementException("Medic not found");
+            }
             medicService.deleteMedic(id);
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting medic.");
         }
     }
 }
