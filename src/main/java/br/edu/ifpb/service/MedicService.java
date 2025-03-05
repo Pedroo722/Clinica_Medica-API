@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.model.Medic;
 import br.edu.ifpb.repository.MedicRepository;
+import br.edu.ifpb.util.MedicValidations;
 
 @Service
 public class MedicService {
@@ -23,6 +24,8 @@ public class MedicService {
     }
 
     public Medic saveMedic(Medic medic) {
+        MedicValidations.validateEmail(medic.getEmail());
+        MedicValidations.validateCRM(medic.getCrm());
         return medicRepository.save(medic);
     }
 

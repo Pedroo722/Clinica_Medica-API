@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.model.Patient;
 import br.edu.ifpb.repository.PatientRepository;
+import br.edu.ifpb.util.PatientValidations;
 
 @Service
 public class PatientService {
@@ -23,6 +24,8 @@ public class PatientService {
     }
 
     public Patient savePatient(Patient patient) {
+        PatientValidations.validateEmail(patient.getEmail());
+        PatientValidations.validateCPF(patient.getCpf());
         return patientRepository.save(patient);
     }
 
@@ -33,7 +36,7 @@ public class PatientService {
     public List<Patient> findPatientByName(String name) {
         return patientRepository.findByNome(name);
     }
-
+    
     public List<Patient> findPatientByCpf(String cpf) {
         return patientRepository.findByCpf(cpf);
     }
