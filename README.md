@@ -1,6 +1,6 @@
 # Clínica Médica API
 
-Projeto back-end criado para a disciplina de **Desenvolvimento de Aplicações Web II**. A aplicação foi construída utilizando **Spring Boot** e **PostgreSQL** como banco de dados, visando criar uma API REST para a consulta de informações de um banco de dados de uma Clínica Médica fictícia desenvolvida como parte da disciplina de **Banco de Dados 1**.
+Projeto back-end criado para a disciplina de **Desenvolvimento de Aplicações Web II** e aproveitado na matéria de **Análise e Projeto de Sistemas**. A aplicação foi construída utilizando **Spring Boot** e **PostgreSQL** como banco de dados, visando criar uma API REST para a consulta de informações de um banco de dados de uma Clínica Médica fictícia originalmente desenvolvido como parte da disciplina de **Banco de Dados 1**.
 
 Membros do Projeto:
 - Pedro Henrique Alexandre.
@@ -20,12 +20,10 @@ Membros do Projeto:
 
 ## Funcionalidades
 
-* **Login e Autenticação de Usuário**
 * **Cadastro e Gerenciamento de Pacientes**
 * **Agendamento de Consultas Médicas**
-* **Visualização de Disponibilidade de Médicos**
 * **Cadastro de Exames e Procedimentos Médicos**
-* **Criação de Receitas**
+* **Criação de Receitas Médicas**
 * **Registro de Fichas Médicas**
 
 
@@ -35,6 +33,7 @@ Membros do Projeto:
 - **Model**: Representa as entidades do banco de dados e seus atributos.
 - **Repository**: Arquivos que fazem a conexão com o banco de dados.
 - **Service**: Contêm a lógica de negócio para manipular e consultar os dados.
+- **Util**: Contêm arquivos com metodos de validação dos dados das entidades da clínica.
 
 ## Como Executar
 ### Pré-requisitos
@@ -69,39 +68,39 @@ Membros do Projeto:
 A API fornece os seguintes endpoints para a manipulação de dados relacionados a pacientes, médicos, consultas, receitas e fichas médicas. Cada endpoint permite as operações básicas CRUD.
 
 ### Paciente
-- **GET** `/api/patients/{id}`: Recupera um paciente pelo ID.
-- **POST** `/api/patients`: Cria um novo paciente.
-- **PUT** `/api/patients/{id}`: Atualiza um paciente existente.
-- **DELETE** `/api/patients/{id}`: Remove um paciente pelo ID.
-- **GET** `/api/patients`: Recupera todos os pacientes.
+- **GET** `/api/patients/list`: Recupera todos os pacientes. Permitindo a filtragem pelos parametros *`?name=`* & *`?cpf=*`*.
+- **GET** `/api/patients/list/{id}`: Recupera um paciente pelo ID.
+- **POST** `/api/patients/create`: Cria um novo paciente.
+- **PUT** `/api/patients/update/{id}`: Atualiza um paciente existente.
+- **DELETE** `/api/patients/delete/{id}`: Remove um paciente pelo ID.
 
 ### Consulta
-- **GET** `/api/consultations/{id}`: Recupera uma consulta pelo ID.
-- **POST** `/api/consultations`: Cria uma nova consulta.
-- **PUT** `/api/consultations/{id}`: Atualiza uma consulta existente.
-- **DELETE** `/api/consultations/{id}`: Remove uma consulta pelo ID.
-- **GET** `/api/consultations`: Recupera todas as consultas.
+- **GET** `/api/consultations/list`: Recupera todas as consultas.
+- **GET** `/api/consultations/list/{id}`: Recupera uma consulta pelo ID.
+- **POST** `/api/consultations/create`: Cria uma nova consulta.
+- **PUT** `/api/consultations/update/{id}`: Atualiza uma consulta existente.
+- **DELETE** `/api/consultations/delete/{id}`: Remove uma consulta pelo ID.
 
 ### Médico
-- **GET** `/api/medics/{id}`: Recupera um médico pelo ID.
-- **POST** `/api/medics`: Cria um novo médico.
-- **PUT** `/api/medics/{id}`: Atualiza um médico existente.
-- **DELETE** `/api/medics/{id}`: Remove um médico pelo ID.
-- **GET** `/api/medics`: Recupera todos os médicos.
+- **GET** `/api/medics/list`: Recupera todos os médicos. Permitindo a filtragem pelos parametros *`?name=`* & *`?crm=*`*.
+- **GET** `/api/medics/list/{id}`: Recupera um médico pelo ID.
+- **POST** `/api/medics/create`: Cria um novo médico.
+- **PUT** `/api/medics/update/{id}`: Atualiza um médico existente.
+- **DELETE** `/api/medics/delete/{id}`: Remove um médico pelo ID.
 
 ### Ficha
-- **GET** `/api/records/{id}`: Recupera um registro pelo ID.
-- **POST** `/api/records`: Cria um novo registro.
-- **PUT** `/api/records/{id}`: Atualiza um registro existente.
-- **DELETE** `/api/records/{id}`: Remove um registro pelo ID.
-- **GET** `/api/records`: Recupera todos os registros.
+- **GET** `/api/records/list`: Recupera todos os registros. Permitindo a filtragem por meio do parametro *`?id_paciente=`*.
+- **GET** `/api/records/list/{id}`: Recupera um registro pelo ID.
+- **POST** `/api/records/create`: Cria um novo registro.
+- **PUT** `/api/records/update/{id}`: Atualiza um registro existente.
+- **DELETE** `/api/records/delete/{id}`: Remove um registro pelo ID.
 
 ### Receita
-- **GET** `/api/recipes/{id}`: Recupera uma receita pelo ID.
-- **POST** `/api/recipes`: Cria uma nova receita.
-- **PUT** `/api/recipes/{id}`: Atualiza uma receita existente.
-- **DELETE** `/api/recipes/{id}`: Remove uma receita pelo ID.
-- **GET** `/api/recipes`: Recupera todas as receitas.
+- **GET** `/api/recipes/list`: Recupera todas as receitas.
+- **GET** `/api/recipes/list/{id}`: Recupera uma receita pelo ID.
+- **POST** `/api/recipes/create`: Cria uma nova receita.
+- **PUT** `/api/recipes/update/{id}`: Atualiza uma receita existente.
+- **DELETE** `/api/recipes/delete/{id}`: Remove uma receita pelo ID.
 
 ## Estrutura dos Dados
 ### Paciente
@@ -180,7 +179,6 @@ Representa as informações referentes a receita de uma consulta.
     "validade": "01/12/2025",
     "observacoes": "",
     "id_consulta": 1,
-    "id_medico": 1
 }
 
 ```
