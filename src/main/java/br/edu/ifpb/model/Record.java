@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -32,8 +32,8 @@ public class Record {
     @Column(name = "observacoes")
     private String observacoes;
 
-    @ManyToOne
-    @JoinColumn(name = "id_paciente", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "id_paciente", nullable = false, unique = true)
     private Patient paciente;
 
     public Long getId() { return id; }
