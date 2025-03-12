@@ -18,6 +18,22 @@ Membros do Projeto:
 
 </div>
 
+## Esquema Conceitual
+
+<div align="center">
+
+![Conceitual](conceitual.png)
+
+</div>
+
+## Esquema Lógico
+
+<div align="center">
+
+![Logico](logico.png)
+
+</div>
+
 ## Funcionalidades
 
 * **Cadastro e Gerenciamento de Pacientes**
@@ -106,21 +122,37 @@ A API fornece os seguintes endpoints para a manipulação de dados relacionados 
 - **DELETE** `/api/recipes/delete/{id}`: Remove uma receita pelo ID.
 
 ## Estrutura dos Dados
+Coleção de exemplo de como é a formatação dos dados de resposta da API.
+
 ### Paciente
 Representa um paciente e suas informações básicas.
 
 ```json
 {
-    "id": 1,
-    "nome": "Hugo",
+    "id": 2,
+    "nome": "Eduardo Batista",
     "sexo": "Masculino",
-    "cpf": "230.333.666-98",
-    "email": "hugo.pa@gmail.com",
-    "telefone": "9876543216",
-    "endereco": "Rua Exemplo, 123, Centro",
-    "data_nascimento": "1996-01-01T00:00:00-02:00",
-    "tipo_sanguineo": "B+",
-    "identificador_tarefa": 1
+    "cpf": "456.123.555-00",
+    "email": "eduardo77@email.com",
+    "telefone": "(11) 91553-2424",
+    "endereco": "Rua Rio de Janeiro, 123",
+    "data_nascimento": "2000-01-07",
+    "tipo_sanguineo": "B-"
+}
+```
+
+### Médico
+Contém os dados de contato e disponibilidade de um médico.
+
+```json
+{
+    "id": 1,
+    "nome": "Dr. João Silva",
+    "email": "joao.silva@email.com",
+    "telefone": "(11) 98765-4321",
+    "especialidade": "Cardiologia",
+    "statusDisponibilidade": "Disponível",
+    "crm": "CRM123456/SP"
 }
 ```
 
@@ -131,28 +163,30 @@ Contém a data e horário do agendamento de uma consulta.
 ```json
 {
     "id": 1,
-    "data": "2024-05-21",
-    "horario": "11:30:00",
+    "data": "2024-12-15",
+    "horario": "14:30:00",
     "status": "Agendada",
-    "tipo": "Exame Sanguíneo",
-    "id_paciente": 1,
-    "id_medico": 1
-}
-```
-
-
-### Médico
-Contém os dados de contato e disponibilidade de um médico.
-
-```json
-{
-    "id": 1,
-    "nome": "Francisco",
-    "email": "franciscoexemplo@gmai.com",
-    "telefone": "9876543210",
-    "especialidade": "Cardiologista",
-    "status_disponibilidade": "Indísponível",
-    "crm": "00000000-0/BR"
+    "tipo": "Consulta de rotina",
+    "paciente": {
+        "id": 1,
+        "nome": "João da Silva",
+        "sexo": "Masculino",
+        "cpf": "123.456.789-00",
+        "email": "joao.silva@email.com",
+        "telefone": "(11) 91234-5678",
+        "endereco": "Rua Exemplo, 123, São Paulo",
+        "data_nascimento": "1985-06-15",
+        "tipo_sanguineo": "O+"
+    },
+    "medico": {
+        "id": 1,
+        "nome": "Dr. João Silva",
+        "email": "joao.silva@email.com",
+        "telefone": "(11) 98765-4321",
+        "especialidade": "Cardiologia",
+        "statusDisponibilidade": "Disponível",
+        "crm": "CRM123456/SP"
+    }
 }
 ```
 
@@ -162,14 +196,23 @@ Representa as informações da ficha médica de um paciente.
 ```json
 {
     "id": 1,
-    "status_paciente": "Estável.",
-    "historico_medico": "Pai com historico de doença cardiaca.",
-    "diagnostico": "Doença cardiaca.",
-    "tratamento": "Cirurgia cardiovascular.",
-    "observacoes": "",
-    "id_paciente": 1
+    "statusPaciente": "Ativo",
+    "historicoMedico": "Paciente com histórico de hipertensão e diabetes",
+    "diagnostico": "Hipertensão arterial",
+    "tratamento": "Medicamento: Losartana, Controle de dieta",
+    "observacoes": "Paciente está estável, mas deve seguir acompanhamento",
+    "paciente": {
+        "id": 1,
+        "nome": "João da Silva",
+        "sexo": "Masculino",
+        "cpf": "123.456.789-00",
+        "email": "joao.silva@email.com",
+        "telefone": "(11) 91234-5678",
+        "endereco": "Rua Exemplo, 123, São Paulo",
+        "data_nascimento": "1985-06-15",
+        "tipo_sanguineo": "O+"
+    }
 }
-
 ```
 
 ### Receita
@@ -178,10 +221,35 @@ Representa as informações referentes a receita de uma consulta.
 ```json
 {
     "id": 1,
-    "medicamentos_prescritos": "Xarópe.",
-    "validade": "01/12/2025",
-    "observacoes": "",
-    "id_consulta": 1,
+    "medicamentosPrescritos": "Losartana 50mg, Metformina 500mg",
+    "validade": "2025-12-31",
+    "observacoes": "Atenção para os efeitos colaterais. Manter acompanhamento mensal.",
+    "consulta": {
+        "id": 1,
+        "data": "2024-12-15",
+        "horario": "14:30:00",
+        "status": "Agendada",
+        "tipo": "Consulta de rotina",
+        "paciente": {
+            "id": 1,
+            "nome": "João da Silva",
+            "sexo": "Masculino",
+            "cpf": "123.456.789-00",
+            "email": "joao.silva@email.com",
+            "telefone": "(11) 91234-5678",
+            "endereco": "Rua Exemplo, 123, São Paulo",
+            "data_nascimento": "1985-06-15",
+            "tipo_sanguineo": "O+"
+        },
+        "medico": {
+            "id": 1,
+            "nome": "Dr. João Silva",
+            "email": "joao.silva@email.com",
+            "telefone": "(11) 98765-4321",
+            "especialidade": "Cardiologia",
+            "statusDisponibilidade": "Disponível",
+            "crm": "CRM123456/SP"
+        }
+    }
 }
-
 ```

@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 public class Medic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "identificador_medico")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "nome", nullable = false)

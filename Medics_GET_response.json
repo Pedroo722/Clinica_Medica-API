@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "nome": "Dr. João Silva",
+        "email": "joao.silva@email.com",
+        "telefone": "(11) 98765-4321",
+        "especialidade": "Cardiologia",
+        "statusDisponibilidade": "Disponível",
+        "crm": "CRM123456/SP"
+    },
+    {
+        "id": 4,
+        "nome": "Medico Teste",
+        "email": "email@gmail.com",
+        "telefone": "12345678",
+        "especialidade": "Cardiologista",
+        "statusDisponibilidade": "Disponível",
+        "crm": "123456 CRM/SP"
+    }
+]

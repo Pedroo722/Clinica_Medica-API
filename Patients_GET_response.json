@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "nome": "João da Silva",
+        "sexo": "Masculino",
+        "cpf": "123.456.789-00",
+        "email": "joao.silva@email.com",
+        "telefone": "(11) 91234-5678",
+        "endereco": "Rua Exemplo, 123, São Paulo",
+        "data_nascimento": "1985-06-15",
+        "tipo_sanguineo": "O+"
+    },
+    {
+        "id": 2,
+        "nome": "Eduardo Batista",
+        "sexo": "Masculino",
+        "cpf": "456.123.555-00",
+        "email": "eduardo77@email.com",
+        "telefone": "(11) 91553-2424",
+        "endereco": "Rua Rio de Janeiro, 123",
+        "data_nascimento": "2000-01-07",
+        "tipo_sanguineo": "B-"
+    },
+    {
+        "id": 3,
+        "nome": "Thiago",
+        "sexo": "Masculino",
+        "cpf": "xxx.xxx.xxx-00",
+        "email": "eduardo77@email.com",
+        "telefone": "(11) 91553-2424",
+        "endereco": "Rua Rio de Janeiro, 123",
+        "data_nascimento": "2000-01-07",
+        "tipo_sanguineo": "B-"
+    }
+]

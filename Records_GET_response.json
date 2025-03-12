@@ -1,0 +1,21 @@
+[
+    {
+        "id": 1,
+        "statusPaciente": "Ativo",
+        "historicoMedico": "Paciente com histórico de hipertensão e diabetes",
+        "diagnostico": "Hipertensão arterial",
+        "tratamento": "Medicamento: Losartana, Controle de dieta",
+        "observacoes": "Paciente está estável, mas deve seguir acompanhamento",
+        "paciente": {
+            "id": 1,
+            "nome": "João da Silva",
+            "sexo": "Masculino",
+            "cpf": "123.456.789-00",
+            "email": "joao.silva@email.com",
+            "telefone": "(11) 91234-5678",
+            "endereco": "Rua Exemplo, 123, São Paulo",
+            "data_nascimento": "1985-06-15",
+            "tipo_sanguineo": "O+"
+        }
+    }
+]
